@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
             OkHttpClient client1 = new OkHttpClient();
             String url = "https://api.nutritionix.com/v1_1/search/cheddar%20cheese?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=be52f772&appKey=72e6cc77520c67fde8cb189de04a3167";
-            String holder = "the fuck";
+            String holder = "";
             try{
                 holder = run(url);
             }
@@ -139,16 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     //run takePicture on button click
                 }
             });
-            yesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    System.out.println(client.predict("general-v1.3")
-                            .withInputs(
-                                    ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/metro-north.jpg"))
-                            )
-                            .executeSync());
-                }
-            });
+
 
             yesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
 
                     // List of Recognized Result from Image
                     ArrayList<String> resultList = MainActivity.recognize(imageUrl);
-
+                    yesButton.setVisibility(View.GONE);
+                    noButton.setVisibility(View.GONE);
+                    takePictureButton.setVisibility(View.VISIBLE);
                     Intent intent = new Intent(MainActivity.this, DisplayResults.class);
                     // Iteration of Result
 
@@ -203,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
 
                     if(concepts != null && concepts.size() > 0) {
                         for (int j = 0; j < concepts.size(); j++) {
-
                             resultList.add(concepts.get(j).name());
+                            resultList.add(String.valueOf(concepts.get(j).value()));
                         }
                     }
                 }
