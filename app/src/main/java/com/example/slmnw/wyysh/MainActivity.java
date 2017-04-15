@@ -3,6 +3,7 @@ package com.example.slmnw.wyysh;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +47,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import clarifai2.api.ClarifaiBuilder;
+import clarifai2.api.ClarifaiClient;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.prediction.Concept;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
@@ -82,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
     private Handler mBackgroundHandler;
 
     private HandlerThread mBackgroundThread;
+
+    final static ClarifaiClient client = new ClarifaiBuilder("jDMDzHsvc1GF-UQjHV-ja8RqJSR0INBQJP_mwXUP", "iPhB7i2NbjbqbCz4-n4dqul1V8XtKTlH1XcbSd_M").buildSync();
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
@@ -138,10 +150,73 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // You can change the Image URL accordingly.
+                    String imageUrl = "http://www.dream-wallpaper.com/free-wallpaper/nature-wallpaper/dream-homes-1-wallpaper/1280x800/free-wallpaper-9.jpg";
+
+                    // List of Recognized Result from Image
+                    ArrayList<String> resultList = MainActivity.recognize(imageUrl);
+
+                    Intent intent = new Intent(MainActivity.this, DisplayResults.class);
+                    // Iteration of Result
+                    for(String result : resultList) {
+
+                        System.out.println(result);
+
+                    }
+                    intent.putStringArrayListExtra("resultList", resultList);
+                   startActivity(intent);
+
+
+                }
+
+
+            });
 
 
         }
 
+    public static ArrayList<String> recognize(String imageUrl) {
+
+        // Defining List Object
+        ArrayList<String> resultList = new ArrayList<String>();
+
+        if(imageUrl != null && !imageUrl.isEmpty()) {
+
+
+            final List<ClarifaiOutput<Concept>> predictionResults =
+                    client.getDefaultModels().foodModel() // You can also do client.getModelByID("id") to get custom models
+                            .predict()
+                            .withInputs(
+                                    ClarifaiInput.forImage(ClarifaiImage.of(new File(Environment.getExternalStorageDirectory()+"/calorieme.jpg")))
+                            )
+                            .executeSync()
+                            .get();
+
+            if (predictionResults != null && predictionResults.size() > 0) {
+
+                // Prediction List Iteration
+                for (int i = 0; i < predictionResults.size(); i++) {
+
+                    ClarifaiOutput<Concept> clarifaiOutput = predictionResults.get(i);
+
+                    List<Concept> concepts = clarifaiOutput.data();
+
+                    if(concepts != null && concepts.size() > 0) {
+                        for (int j = 0; j < concepts.size(); j++) {
+
+                            resultList.add(concepts.get(j).name());
+                        }
+                    }
+                }
+            }
+
+        }
+        return resultList;
+    }
 
 
     String run(String url) throws IOException {
@@ -216,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         if(null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
             ImageView jpgView = (ImageView)findViewById(R.id.imageView);
-            Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/calorieme.jpg");
             jpgView.setImageBitmap(bitmap);
             return;
         }
@@ -243,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            final File file = new File(Environment.getExternalStorageDirectory()+"/calorieme.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
