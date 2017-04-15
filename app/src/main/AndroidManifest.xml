@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DisplayResults"></activity>
+        <activity android:name=".Nutrients"></activity>
     </application>
 
 </manifest>

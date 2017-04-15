@@ -102,14 +102,6 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             OkHttpClient client1 = new OkHttpClient();
-            String url = "https://api.nutritionix.com/v1_1/search/cheddar%20cheese?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=be52f772&appKey=72e6cc77520c67fde8cb189de04a3167";
-            String holder = "";
-            try{
-                holder = run(url);
-            }
-            catch(Exception e) {
-            };
-            System.out.println(holder);
             final ClarifaiClient client = new ClarifaiBuilder("jDMDzHsvc1GF-UQjHV-ja8RqJSR0INBQJP_mwXUP", "iPhB7i2NbjbqbCz4-n4dqul1V8XtKTlH1XcbSd_M").buildSync();
             textureView = (TextureView) findViewById(R.id.texture);          //find textureview
             assert textureView != null;

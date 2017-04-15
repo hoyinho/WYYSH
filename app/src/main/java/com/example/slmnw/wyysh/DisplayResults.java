@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -64,7 +66,8 @@ public class DisplayResults extends AppCompatActivity {
                     Response response = client.newCall(request).execute();
                     JSONObject holder = new JSONObject(response.body().string());
                     double calories = ((JSONObject) holder.getJSONArray("hits").get(0)).getJSONObject("fields").getDouble("nf_calories");
-                    acceptableFoods.add(RESULTLIST.get(x) + " " + String.valueOf(calories));
+                    String output = RESULTLIST.get(x).substring(0, 1).toUpperCase() + RESULTLIST.get(x).substring(1);
+                    acceptableFoods.add(output + "\n    Calories: " + String.valueOf(calories));
                 } catch (Exception e) {
                 }
             }
@@ -73,6 +76,14 @@ public class DisplayResults extends AppCompatActivity {
                 (this, android.R.layout.simple_list_item_1, acceptableFoods);
 
         list.setAdapter(arrayAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                Intent intent = new Intent(DisplayResults.this, Nutrients.class);
+                intent.putExtra("foodName", adapterView.getItemAtPosition(pos).toString().split("\n")[0] );
+                startActivity(intent);
+            }
+        });
 
     }
 }
