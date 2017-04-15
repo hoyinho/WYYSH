@@ -4,6 +4,8 @@ package com.example.slmnw.wyysh;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -31,6 +33,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +49,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "AndroidCameraApi";
     private Button takePictureButton;
+    private Button yesButton;
+    private Button noButton;
     private TextureView textureView;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -68,23 +73,47 @@ public class MainActivity extends AppCompatActivity {
     private HandlerThread mBackgroundThread;
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
+
 
             textureView = (TextureView) findViewById(R.id.texture);          //find textureview
             assert textureView != null;
             textureView.setSurfaceTextureListener(textureListener);
 
-            takePictureButton = (Button) findViewById(R.id.btn_takepicture);   //set to button
+            takePictureButton = (Button) findViewById(R.id.btn_takepicture);
+            yesButton = (Button)findViewById(R.id.yesButton);
+            noButton = (Button) findViewById(R.id.noButton);
+            yesButton.setVisibility(View.GONE);
+            noButton.setVisibility(View.GONE);//set to button
             assert takePictureButton != null;
+            noButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View V) {
+                    createCameraPreview();
+                    yesButton.setVisibility(View.GONE);
+                    noButton.setVisibility(View.GONE);
+                    takePictureButton.setVisibility(View.VISIBLE);
+                }
+            });
             takePictureButton.setOnClickListener(new View.OnClickListener() {   //wait for click
                 @Override
                 public void onClick(View v) {
-                    takePicture();                                   //run takePicture on button click
+                    takePicture();
+                    takePictureButton.setVisibility(View.GONE);
+                    yesButton.setVisibility(View.VISIBLE);
+                    noButton.setVisibility(View.VISIBLE);
+                    //run takePicture on button click
                 }
             });
+
+
+
         }
+
+
+
+
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -147,6 +176,9 @@ public class MainActivity extends AppCompatActivity {
     protected void takePicture() {
         if(null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
+            ImageView jpgView = (ImageView)findViewById(R.id.imageView);
+            Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            jpgView.setImageBitmap(bitmap);
             return;
         }
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
@@ -159,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             int width = 640;
             int height = 480;
             if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
+                width =  jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
             }
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
@@ -211,7 +243,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
                     Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    createCameraPreview();
+
+
+
                 }
             };
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
