@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,15 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+
+import clarifai2.api.ClarifaiBuilder;
+import clarifai2.api.ClarifaiClient;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.image.ClarifaiImage;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -70,14 +80,25 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
+
     private HandlerThread mBackgroundThread;
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
-
-
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            OkHttpClient client1 = new OkHttpClient();
+            String url = "https://api.nutritionix.com/v1_1/search/cheddar%20cheese?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=be52f772&appKey=72e6cc77520c67fde8cb189de04a3167";
+            String holder = "the fuck";
+            try{
+                holder = run(url);
+            }
+            catch(Exception e) {
+            };
+            System.out.println(holder);
+            final ClarifaiClient client = new ClarifaiBuilder("jDMDzHsvc1GF-UQjHV-ja8RqJSR0INBQJP_mwXUP", "iPhB7i2NbjbqbCz4-n4dqul1V8XtKTlH1XcbSd_M").buildSync();
             textureView = (TextureView) findViewById(R.id.texture);          //find textureview
             assert textureView != null;
             textureView.setSurfaceTextureListener(textureListener);
@@ -106,6 +127,16 @@ public class MainActivity extends AppCompatActivity {
                     //run takePicture on button click
                 }
             });
+            yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    System.out.println(client.predict("general-v1.3")
+                            .withInputs(
+                                    ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/metro-north.jpg"))
+                            )
+                            .executeSync());
+                }
+            });
 
 
 
@@ -113,7 +144,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    String run(String url) throws IOException {
+        OkHttpClient client1 = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
 
+        Response response = client1.newCall(request).execute();
+        return response.body().string();
+    }
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
