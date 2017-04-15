@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
                     intent.putStringArrayListExtra("resultList", resultList);
                    startActivity(intent);
 
-
                 }
 
 
@@ -338,9 +337,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
                     Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-
-
-
                 }
             };
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -457,7 +453,6 @@ public class MainActivity extends AppCompatActivity {
         stopBackgroundThread();
         super.onPause();
     }
-
 
     }
 

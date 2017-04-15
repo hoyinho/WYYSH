@@ -24,8 +24,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-
-
 public class DisplayResults extends AppCompatActivity {
 
     private List<String> RESULTLIST;
@@ -34,20 +32,12 @@ public class DisplayResults extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_results);
 
-        /*ImageView picView = (ImageView)findViewById(R.id.imageDisplay);
-        Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/calorieme.jpg");
-        picView.setImageBitmap(bitmap);*/
 
         RESULTLIST = new ArrayList<String>();
 
         ListView list = (ListView) findViewById(R.id.resultingList);
 
-       // intent.putStringArrayListExtra("RESULTLIST", (ArrayList<String>) RESULTLIST);
         ArrayList<String> RESULTLIST = getIntent().getStringArrayListExtra("resultList");
-       // System.out.println(RESULTLIST.size());
-
-
-
 
 
 //////////////////////////////////////////////////////////////OKHttp///////////////////////////////////////////////
@@ -57,7 +47,9 @@ public class DisplayResults extends AppCompatActivity {
         for(int x=0; x < RESULTLIST.size(); x+=2) {
             System.out.println(RESULTLIST.get(x) + " " + String.valueOf(RESULTLIST.get(x+1)));
             if (Float.parseFloat(RESULTLIST.get(x+1)) > 0.85 ) {
-                String url = "https://api.nutritionix.com/v1_1/search/" + RESULTLIST.get(x) + "?results=0%3A1&cal_min=0&cal_max=50000&fields=nf_calories&appId=840e8f6d&appKey=9f433f3c4fbaf449b1f2530b36ce4fe1";
+                String appId ="be52f772";
+                String appKey = "72e6cc77520c67fde8cb189de04a3167";
+                String url = "https://api.nutritionix.com/v1_1/search/" + RESULTLIST.get(x) + "?results=0%3A1&cal_min=0&cal_max=50000&fields=nf_calories&appId="+appId + "&appKey="+appKey;
                 try {
                     Request request = new Request.Builder()
                             .url(url)
