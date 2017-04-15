@@ -39,25 +39,24 @@ public class Nutrients extends AppCompatActivity {
             ArrayList<String> nutritionValues = new ArrayList<String>();
             while (iter.hasNext()){
                 String field = iter.next();
-                if (Arrays.asList(categories).contains(field)){
-                    String output = "";
-                    String[] words = field.split("_");
-                    if (words.length > 3){
-                        output += words[1].substring(0, 1).toUpperCase() + words[1].substring(1) + " " + words[2].substring(0, 1).toUpperCase() + words[2].substring(1);
+                if (Arrays.asList(categories).contains(field)) {
+                    if (fields.get(field) != null) {
+                        String output = "";
+                        String[] words = field.split("_");
+                        if (words.length > 3) {
+                            output += words[1].substring(0, 1).toUpperCase() + words[1].substring(1) + " " + words[2].substring(0, 1).toUpperCase() + words[2].substring(1);
+                        } else {
+                            output += words[1].substring(0, 1).toUpperCase() + words[1].substring(1);
+                        }
+                        output += ":   " + Double.toString(fields.getDouble(field));
+                        if (words[1].equals("sugars") || words[1].equals("protein")) {
+                            output += "g";
+                        } else if (words[1].equals("calories")) {
+                        } else {
+                            output += "mg";
+                        }
+                        nutritionValues.add(output);
                     }
-                    else {
-                        output += words[1].substring(0, 1).toUpperCase() + words[1].substring(1);
-                    }
-                    output += ":   " + Double.toString(fields.getDouble(field));
-                    if (words[1].equals( "sugars") || words[1].equals("protein")){
-                        output += "g";
-                    }
-                    else if (words[1].equals( "calories")){
-                    }
-                    else{
-                        output += "mg";
-                    }
-                    nutritionValues.add(output);
                 }
             }
             ListView list = (ListView) findViewById(R.id.nutrients);
