@@ -3,6 +3,7 @@ package com.example.slmnw.wyysh;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -52,6 +53,8 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -128,13 +131,19 @@ public class MainActivity extends AppCompatActivity {
                     String imageUrl = "http://www.dream-wallpaper.com/free-wallpaper/nature-wallpaper/dream-homes-1-wallpaper/1280x800/free-wallpaper-9.jpg";
 
                     // List of Recognized Result from Image
-                    List<String> resultList = MainActivity.recognize(imageUrl);
+                    ArrayList<String> resultList = MainActivity.recognize(imageUrl);
 
+                    Intent intent = new Intent(MainActivity.this, DisplayResults.class);
                     // Iteration of Result
                     for(String result : resultList) {
 
                         System.out.println(result);
+
                     }
+                    intent.putStringArrayListExtra("resultList", resultList);
+                   startActivity(intent);
+
+
                 }
 
 
@@ -143,10 +152,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-    public static List<String> recognize(String imageUrl) {
+    public static ArrayList<String> recognize(String imageUrl) {
 
         // Defining List Object
-        List<String> resultList = new ArrayList<String>();
+        ArrayList<String> resultList = new ArrayList<String>();
 
         if(imageUrl != null && !imageUrl.isEmpty()) {
 
