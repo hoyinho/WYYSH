@@ -135,11 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, DisplayResults.class);
                     // Iteration of Result
-                    for(String result : resultList) {
 
-                        System.out.println(result);
-
-                    }
                     intent.putStringArrayListExtra("resultList", resultList);
                    startActivity(intent);
 
